@@ -4,6 +4,10 @@ setlocal
 :: バッチファイルが置かれているディレクトリに移動
 cd /d "%~dp0"
 
+echo Windowsで長いパスを有効にします...
+reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem" /v LongPathsEnabled /t REG_DWORD /d 1 /f
+
+
 :: Pythonの最新版のURLを取得する
 echo Fetching the latest Python version...
 for /f "tokens=*" %%i in ('powershell -Command "(Invoke-WebRequest -Uri 'https://www.python.org/downloads/windows/').Content -match 'https://www.python.org/ftp/python/[\d\.]+/python-[\d\.]+-amd64.exe' | Out-Null; $matches[0]"') do set "installer_url=%%i"
