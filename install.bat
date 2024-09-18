@@ -1,12 +1,19 @@
 @echo off
 setlocal
 
+:: 管理者権限確認
+net session >nul 2>&1
+if %errorlevel% neq 0 (
+    echo This script requires administrative privileges.
+    pause
+    exit /b 1
+)
+
 :: バッチファイルが置かれているディレクトリに移動
 cd /d "%~dp0"
 
 echo Windowsで長いパスを有効にします...
 reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem" /v LongPathsEnabled /t REG_DWORD /d 1 /f
-
 
 :: Pythonの最新版のURLを取得する
 echo Fetching the latest Python version...
@@ -45,7 +52,7 @@ echo Installing Python...
 start /wait "" "%installer%" /passive InstallAllUsers=1 PrependPath=1 TargetDir="%install_dir%" /log "python_install.log"
 if not exist "%install_dir%\python.exe" (
     echo Python installation failed.
-    type "python_install.log"
+    type "python_install.log" | more
     pause
     exit /b 1
 )
@@ -75,7 +82,7 @@ if exist "requirements.txt" (
 )
 
 :: 完了メッセージ
-echo Setup complete. Press any key to exit.
+echo Setup complete. Please restart your command prompt or PC to apply the new PATH settings.
 pause
 
 endlocal
